@@ -27,13 +27,19 @@ Created by RUNTHROUTHEJUNGLE on 2012-01-27.
 Copyright (c) 2012. All rights reserved.
 """
 
-import os
+import os, sys
 import telnetlib
 import Tkinter as tk
 import tkFileDialog as diag
+import tkMessageBox
 
 interval = 2        # in seconds
 activities = {"1": "swimming", "2": "floating", "3": "drowning"}
+
+HELP_VCL_CONNECT = """
+Could not connect to VLC.
+Start VLC and add the Telnet Interface from the main menu.
+VLC -> add interface -> telnet"""
 
 
 class App():
@@ -54,11 +60,16 @@ class App():
         self.file_button.pack()
         self.label = tk.Label(text="choose a video to work on")
         self.label.pack()
+        # imagepath = os.path.join(self.fdir, 'images', 'neufi.jpg')
 
     def init_vlc_connection(self):
         """open telnet connection to running VLC player"""
         self.vlc = VLCClient("::1")
-        self.vlc.connect()
+        try:
+            self.vlc.connect()
+        except Exception, e:
+            tkMessageBox.showerror("VLC", HELP_VCL_CONNECT)
+            sys.exit()
 
     def load_video_into_vlc(self):
         """load video into vlc player"""
