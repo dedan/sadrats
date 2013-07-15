@@ -48,6 +48,7 @@ class App():
         self.out = []
         self.activities = activities
         self.chars = "".join(self.activities.keys())
+        self.fdir = os.path.dirname(__file__)
         self.root = tk.Tk()
         self.init_vlc_connection()
         self.init_gui()
@@ -103,16 +104,15 @@ class App():
     def on_keypress(self, event):
         """wait for user input"""
         # read and record key
-        self.root.unbind('<Key>')
         if event.char in self.chars:
+            self.root.unbind('<Key>')
             self.out.append(event.char)
-
-        # if the rest of the video is a full interval
-        if self.vlc.get_time() + self.interval < self.video_length:
-            self.root.after(self.interval * 1000, self.repeated_loop)
-            self.vlc.play()
-        else:
-            self.stop()
+            # if the rest of the video is a full interval
+            if self.vlc.get_time() + self.interval < self.vlc.get_length():
+                self.root.after(self.interval * 1000, self.repeated_loop)
+                self.vlc.play()
+            else:
+                self.stop()
 
     def stop(self):
         """docstring for stop"""
